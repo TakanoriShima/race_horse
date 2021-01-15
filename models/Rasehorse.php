@@ -1,5 +1,7 @@
 <?php
     require_once 'daos/RacehorseDAO.php';
+    require_once 'daos/FavoriteDAO.php';
+    
     //レース投稿　一件分の投稿のデータを格納するクラス　DTO
     class Racehorse {
         public $id;
@@ -19,9 +21,22 @@
             $this->content = $content;
         }
         
+        // 投稿したユーザを取得するメソッド
         public function get_user(){
             $racehorse_dao = new RacehorseDAO();
             $user = $racehorse_dao->get_user($this->id);
             return $user;
+        }
+        
+        // 注目しているユーザがいいねしているかチェックするメソッド
+        public function check_favorite($user_id){
+            $favorite_dao = new FavoriteDAO();
+            return $favorite_dao->check_favorite($user_id, $this->id);
+        }
+        
+        // いいねの数をカウントするメソッド
+        public function get_favorites_count(){
+            $favorite_dao = new FavoriteDAO();
+            return $favorite_dao->get_favorites_count($this->id);
         }
     }

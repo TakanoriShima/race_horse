@@ -2,6 +2,7 @@
     // 外部ファイルの読み込み 
     require_once 'daos/UserDAO.php';
     require_once 'daos/RacehorseDAO.php';
+
     // セッションスタート
     session_start();
     
@@ -30,13 +31,9 @@
 
         $racehorse_dao = null;
 
-        if($_SESSION['flash_message'] !== null && $_SESSION['flash_message'] !== '投稿しました'){
-            $flash_message = 'ログインしました';
-            $_SESSION['flash_message'] = null;
-        }else if($_SESSION['flash_message'] !== null && $_SESSION['flash_message'] === '投稿しました'){
-            $flash_message = $_SESSION['flash_message'];
-            $_SESSION['flash_message'] = null;
-        }
+        $flash_message = $_SESSION['flash_message'];
+        $_SESSION['flash_message'] = null;
+        
     }
  
 ?>
@@ -92,6 +89,7 @@
                         <th>レース名</th>
                         <th>コメント</th>
                         <th>投稿日時</th>
+                        <th>いいね数</th>
                     </tr>
                 <?php foreach($racehorses as $racehorse){ ?>    
                     <tr>
@@ -107,6 +105,15 @@
                         <td><?php print $racehorse->race_name; ?></td>
                         <td><?php print $racehorse->content; ?></td>
                         <td><?php print $racehorse->created_at; ?></td>
+                        <td>
+                            <?php if($racehorse->check_favorite($user_id) === false){ ?>
+                            <form action="favorite.php" method="POST">
+                                <input type="hidden" name="racehorse_id" value="<?= $racehorse->id ?>">
+                                <button type="submit">いいね</button> 
+                            </form>
+                            <?php } ?>
+                            <?= $racehorse->get_favorites_count() ?>
+                        </td>
                     </tr>
                 <?php } ?>    
                 </table>
